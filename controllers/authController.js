@@ -1,18 +1,7 @@
 import User from "../models/User.js"
 import { StatusCodes } from "http-status-codes";
+import {BadRequestError,NotFoundError} from "../errors/index.js";
 
-class CustomAPIError extends Error{
-    constructor(message){
-        super(message)
-    }
-}
-
-class BadRequestError extends CustomAPIError{
-    constructor(message){
-        super(message)
-        this.statusCode = StatusCodes.BAD_REQUEST
-    }
-}
 
 const register= async (req,res)=>{
     const {name,email,password} = req.body;

@@ -1,3 +1,5 @@
+// Context is designed to share data that can be considered “global” for a tree of React components, such as the current authenticated user, theme, or preferred language
+
 import React, { useReducer, useContext } from "react";
 import reducer from "./reducers";
 
@@ -14,10 +16,13 @@ const initialState = {
     userLocation:'',
 }
 
+// declaring appContext as the global context
+// In context of what?
 const AppContext = React.createContext()
 
 const AppProvider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
+    // called reducer function with state being the initialState
 
     const displayAlert = () => {
         dispatch({ 

@@ -3,6 +3,7 @@ import { useState,useEffect } from 'react'
 import {Logo,FormRow,Alert} from '../components'
 import Wrapper from '../assets/wrappers/RegisterPage'
 import { useAppContext } from '../context/appContext'
+import { useNavigate } from 'react-router-dom'
 
 const initialState={
   name:'',
@@ -12,10 +13,11 @@ const initialState={
 }
 
 export default function Register() {
+  const navigate = useNavigate()
   const [values,setValues] = useState(initialState)
-  // global state and useNavigate
-  const {isLoading,showAlert,displayAlert,registerUser} = useAppContext()
+  const {user,isLoading,showAlert,displayAlert,registerUser} = useAppContext()
 
+  // setting up a generalized handleChange fucntion
   const handleChange=(e)=>{
     setValues({...values,[e.target.name]:e.target.value})
   }
@@ -25,6 +27,7 @@ export default function Register() {
     const {name,email,password,isMember} = values;
     if(!email || !password || (!isMember && !name)){
       displayAlert();
+      // this function is called from the AppContext->reducer.js file. 
       return;
     }
     const currentUser = {name,email,password}
@@ -35,6 +38,14 @@ export default function Register() {
     }
 
   }
+
+  useEffect(()=>{
+    if(user){
+      setTimeout(()=>{
+        navigate('/') 
+      },3000) 
+    }
+  },[user,navigate])
 
   const toggleMember=()=>{
     setValues({...values,isMember:!values.isMember})
@@ -56,6 +67,7 @@ export default function Register() {
 
             {/* password input */}
             <FormRow type="password" name="password" value={values.password} handleChange={handleChange}/>
+            {/* disable the submit button while isLoading */}
             <button type='submit' className='btn btn-lock' disabled={isLoading} >submit</button>
             <p>
               {values.isMember ? 'Not a member yet?' : 'Already a member?'}

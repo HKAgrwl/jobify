@@ -1,4 +1,4 @@
-import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR,LOGIN_USER_BEGIN,LOGIN_USER_ERROR,LOGIN_USER_SUCCESS } from "./actions";
+import { DISPLAY_ALERT, CLEAR_ALERT, REGISTER_USER_BEGIN, REGISTER_USER_SUCCESS, REGISTER_USER_ERROR,LOGIN_USER_BEGIN,LOGIN_USER_ERROR,LOGIN_USER_SUCCESS,TOGGLE_SIDEBAR, LOGOUT_USER} from "./actions";
 import { initialState } from "./appContext";
 
 const reducer = (state, action) => {
@@ -66,6 +66,23 @@ const reducer = (state, action) => {
             alertText: action.payload.msg,
         }
     }
+
+    if (action.type === TOGGLE_SIDEBAR) {
+        return { ...state, 
+            showSidebar: !state.showSidebar,
+        }
+    }
+
+    if (action.type===LOGOUT_USER){
+        return{
+            ...initialState,
+            user:null,
+            token:null,
+            jobLocation:'',
+            userLocation:'',
+        }
+    }
+
     throw new Error(`no such action : ${action.type}`)
 }
 

@@ -4,7 +4,7 @@ import React, { useReducer, useContext } from "react";
 import reducer from "./reducers";
 import axios from 'axios'
 
-import { CLEAR_ALERT, DISPLAY_ALERT,REGISTER_USER_BEGIN,REGISTER_USER_SUCCESS,REGISTER_USER_ERROR,LOGIN_USER_BEGIN,LOGIN_USER_ERROR,LOGIN_USER_SUCCESS } from "./actions";
+import { CLEAR_ALERT, DISPLAY_ALERT,REGISTER_USER_BEGIN,REGISTER_USER_SUCCESS,REGISTER_USER_ERROR,LOGIN_USER_BEGIN,LOGIN_USER_ERROR,LOGIN_USER_SUCCESS,TOGGLE_SIDEBAR,LOGOUT_USER} from "./actions";
 
 const token = localStorage.getItem('token')
 const user = localStorage.getItem('user')
@@ -19,6 +19,7 @@ const initialState = {
     token: token,
     userLocation: userLocation || '',
     jobLocation: userLocation || '',
+    showSidebar : false,
 }
 
 // declaring appContext as the global context
@@ -94,7 +95,20 @@ const AppProvider = ({ children }) => {
         clearAlert()
     }
 
-    return <AppContext.Provider value={{ ...state,displayAlert,registerUser,loginUser}}>
+    const logoutUser=()=>{
+        dispatch({type:LOGOUT_USER});
+        removeUserFromLocalStorage();
+    }
+
+    const toggleSidebar=()=>{
+        dispatch({type:TOGGLE_SIDEBAR})
+    }
+
+    const updateUser= async(currentUser)=>{
+        console.log(currentUser);
+    }
+
+    return <AppContext.Provider value={{ ...state,displayAlert,registerUser,loginUser,toggleSidebar,logoutUser}}>
         {children}
     </AppContext.Provider>
 }

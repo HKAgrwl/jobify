@@ -4,7 +4,7 @@ import React, { useReducer, useContext } from "react";
 import reducer from "./reducers";
 import axios from 'axios'
 
-import { CLEAR_ALERT, DISPLAY_ALERT,REGISTER_USER_BEGIN,REGISTER_USER_SUCCESS,REGISTER_USER_ERROR,LOGIN_USER_BEGIN,LOGIN_USER_ERROR,LOGIN_USER_SUCCESS,TOGGLE_SIDEBAR,LOGOUT_USER} from "./actions";
+import { CLEAR_ALERT, DISPLAY_ALERT,REGISTER_USER_BEGIN,REGISTER_USER_SUCCESS,REGISTER_USER_ERROR,LOGIN_USER_BEGIN,LOGIN_USER_ERROR,LOGIN_USER_SUCCESS,TOGGLE_SIDEBAR,LOGOUT_USER,UPDATE_USER_BEGIN,UPDATE_USER_SUCCESS,UPDATE_USER_ERROR,HANDLE_CHANGE} from "./actions";
 
 const token = localStorage.getItem('token')
 const user = localStorage.getItem('user')
@@ -18,8 +18,18 @@ const initialState = {
     user: user? JSON.parse(user) : null,
     token: token,
     userLocation: userLocation || '',
-    jobLocation: userLocation || '',
+    // jobLocation: userLocation || '',
     showSidebar : false,
+    IsEditing : false,
+    editJobId : '',
+    position : '',
+    company:'',
+    jobLocation : userLocation || '',
+    jobTypeOptions : ['full-time','part-time','remote','internship'],
+    jobType : 'full-time',
+    statusOptions : ['pending','interview','declined'],
+    status : 'pending',
+
 }
 
 // declaring appContext as the global context
@@ -29,6 +39,36 @@ const AppContext = React.createContext()
 const AppProvider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
     // called reducer function with state being the initialState
+
+    // global axios setup
+    // axios.defaults.headers.common['Authorization'] = `Bearer ${state.token}`
+
+    // Axios custom Instance
+    const authFetch = axios.create({
+        baseURL: '/api/v1',
+    });
+
+    authFetch.interceptors.request.use((config) => {
+        config.headers['Authorization'] = `Bearer ${state.token}`
+        return config
+    },(error) => {
+        return Promise.reject(error);
+    })
+
+    authFetch.interceptors.response.use(
+        (response) => {
+          return response;
+        },
+        (error) => {
+          console.log(error.response)
+          if(error.response.status === 401)
+          {
+            logoutUser();
+          }
+          return Promise.reject(error);
+        }
+      );
+
 
     const displayAlert = () => {
         dispatch({ 
@@ -105,10 +145,34 @@ const AppProvider = ({ children }) => {
     }
 
     const updateUser= async(currentUser)=>{
-        console.log(currentUser);
+        dispatch({type:UPDATE_USER_BEGIN})
+        try {
+            const {data} = await authFetch.patch('/auth/updateUser',currentUser)
+            const {user,location,token} = data
+            dispatch({
+                type:UPDATE_USER_SUCCESS,
+                payload : {user,location,token},
+            })
+            addUserToLocalStorage({user,location,token})
+        } catch (error) {
+            if(error.response.status !== 401){
+                dispatch({
+                    type:UPDATE_USER_ERROR, 
+                    payload : {msg : error.response.data.msg}
+                })
+            }
+            
+        }
     }
 
-    return <AppContext.Provider value={{ ...state,displayAlert,registerUser,loginUser,toggleSidebar,logoutUser}}>
+    const handleChange = ({name,value})=>{
+        dispatch({
+            type:HANDLE_CHANGE,
+            payload : {name,value}
+        })
+    }
+
+    return <AppContext.Provider value={{ ...state,displayAlert,registerUser,loginUser,toggleSidebar,logoutUser,updateUser,handleChange}}>
         {children}
     </AppContext.Provider>
 }

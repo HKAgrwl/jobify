@@ -18,7 +18,6 @@ const Profile = () => {
       displayAlert();
       return;
     }
-
     updateUser({ name, email, lastName, location });
   };
   return (

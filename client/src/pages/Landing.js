@@ -2,9 +2,16 @@ import React from 'react'
 import main from '../assets/images/main.svg'
 import Wrapper from '../assets/wrappers/LandingPage.js'
 import { Logo } from '../components'
+import { useNavigate } from 'react-router-dom'
 
 
 export default function Landing() {
+    const navigate = useNavigate()
+    const handleClick=()=>{
+        navigate('/register')
+    }
+
+
   return (
     <Wrapper>
         <nav>
@@ -19,7 +26,7 @@ export default function Landing() {
                 <p>
                     Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eum placeat, architecto esse, itaque labore voluptatum, eligendi odit sequi eveniet illo dicta atque accusamus.
                 </p>
-                <button className='btn btn-hero'>Login/Register</button>
+                <button className='btn btn-hero' onClick={handleClick}>Login/Register</button>
             </div>
             <img src={main} alt='job-hung-img' className='img main-img' />
         </div>

@@ -1,5 +1,6 @@
 import express from 'express'
 const app = express()
+const path = require('path')
 import dotenv from 'dotenv'
 dotenv.config()
 import 'express-async-errors'
@@ -20,6 +21,13 @@ import authenticateUser from './middleware/auth.js'
 if(process.env.NODE_ENV !== 'production'){
     app.use(morgan('dev'))
 }
+app.use(express.static('./client/build'));
+
+app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build",     
+    "index.html"));
+ });
+
 app.use(express.json())
 
 app.get('/api/v1',(req,res)=>{

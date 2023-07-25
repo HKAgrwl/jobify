@@ -1,1 +1,1 @@
-This is a job finding cum posting platform made under John Smilga.
+This is a job application tracking app.

@@ -18,7 +18,7 @@ Jobify-Server : https://github.com/HKAgrwl/jobify-Server
 ## Demo
 For Demo purpose, the cliend side has been deployed with Cervel whereas the server lies hosted on Render.
 
-Hosted App : https://jobify-client-beta.vercel.app/landing
+Hosted App : https://jobify-frontend-three.vercel.app
 
 
 
